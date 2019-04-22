@@ -1,9 +1,5 @@
 import random
 
-#Alunos:
-#Caique de Paula Figueiredo Coelho
-#Lucas Queiroz
-
 def getBoardCopy(board):
 	#Faz uma copia do quadro e retrona esta copia
 
@@ -16,7 +12,7 @@ def getBoardCopy(board):
 
 def drawBoard(board):
 
-	#Esta funcao imprime o quadro do jogo
+	#Esta funcao imprime o quadro do jogox
 	#O quadro eh uma lista de 9 strings representando o qaudro
 	copyBoard = getBoardCopy(board)
 
@@ -45,9 +41,9 @@ def inputPlayerLetter():
 	letter = ''
 	while not(letter == 'X' or letter == 'O'):
 		print('Voce quer ser X ou O?')
-		letter = raw_input().upper()
+		letter = input().upper()
 		if(letter != 'X' and letter != 'O'):
-			print"Entre apenas com a letra X(xis) se voce quer ser X ou com a letra O(oh) se voce quer ser O!"
+			print("Entre apenas com a letra X(xis) se voce quer ser X ou com a letra O(oh) se voce quer ser O!")
 
 	#O primeiro elemento na lista eh o do jogador e o segundo do computador
 	if letter == 'X':
@@ -65,6 +61,7 @@ def whoGoesFirts():
 def makeMove(board, letter, move):
 	#Faz o movimento do computador ou do jogador a depender do letter no quadro
 	board[move] = letter
+
 
 def isWinner(brd, let):
 	#Dado um quadro e uma letra, esta funcao retorna True se a letra passada vence o jogo
@@ -89,13 +86,13 @@ def getPlayerMove(board):
 	move = ''
 	while move not in '1 2 3 4 5 6 7 8 9'.split() or not isSpaceFree(board, int(move)):
 		print('Qual eh o seu proximo movimento? (1-9)')
-		move = raw_input();
+		move = input();
 		if(move not in '1 2 3 4 5 6 7 8 9'):
-			print "MOVIMENTO INVALIDO! INSIRA UM NUMERO ENTRE 1 E 9!"
+			print ("MOVIMENTO INVALIDO! INSIRA UM NUMERO ENTRE 1 E 9!")
 		
 		if(move in '1 2 3 4 5 6 7 8 9'):
 			if(not isSpaceFree(board, int(move))):
-				print "ESPACO INSDISPONIVEL! ESCOLHA OUTRO ESPACO ENTRE 1 E 9 O QUAL O NUMERO ESTA DISPONIVEL NO QUADRO!"
+				print ("ESPACO INSDISPONIVEL! ESCOLHA OUTRO ESPACO ENTRE 1 E 9 O QUAL O NUMERO ESTA DISPONIVEL NO QUADRO!")
 
 	return int(move)
 
@@ -160,15 +157,9 @@ def finishGame(board, computerLetter):
 def alphabeta(board, computerLetter, turn, alpha, beta):
 	#Fazemos aqui a poda alphabeta
 
-	if computerLetter == 'X':
-		playerLetter = 'O'
-	else:
-		playerLetter = 'X'
+	playerLetter = setLetra(computerLetter)
 
-	if turn == computerLetter:
-		nextTurn = playerLetter
-	else:
-		nextTurn = computerLetter
+	nextTurn = setVez(computerLetter, playerLetter, turn)
 
 	finish = finishGame(board, computerLetter)
 
@@ -202,6 +193,21 @@ def alphabeta(board, computerLetter, turn, alpha, beta):
 		return beta
 
 
+def setVez(computerLetter, playerLetter, turn):
+	if turn == computerLetter:
+		nextTurn = playerLetter
+	else:
+		nextTurn = computerLetter
+	return nextTurn
+
+
+def setLetra(computerLetter):
+	if computerLetter == 'X':
+		playerLetter = 'O'
+	else:
+		playerLetter = 'X'
+	return playerLetter
+
 
 def getComputerMove(board, turn, computerLetter):
 	#Definimos aqui qual sera o movimento do computador
@@ -213,10 +219,6 @@ def getComputerMove(board, turn, computerLetter):
 		playerLetter = 'O'
 	else:
 		playerLetter = 'X'
-
-
-	#if len(possiveisOpcoes(board)) == 9:
-	#	return 5
 
 	#Comecamos aqui o MiniMax
 	#Primeiro chechamos se podemos ganhar no proximo movimento
@@ -238,18 +240,15 @@ def getComputerMove(board, turn, computerLetter):
 	possiveisOpcoesOn = possiveisOpcoes(board)
 
 	for move in possiveisOpcoesOn:
-
 		makeMove(board, computerLetter, move)
-		val = alphabeta(board, computerLetter, playerLetter, -2, 2)		
+		val = alphabeta(board, computerLetter, playerLetter, -2, 2)
+		print(val, 'dsadsadsadsa', move)
 		makeMove(board, '', move)
-
 		if val > a:
 			a = val
 			opcoes = [move]
-
 		elif val == a:
 			opcoes.append(move)
-
 	return random.choice(opcoes)
 
 print('Vamos jogar jogo da velha!')
@@ -287,6 +286,7 @@ while jogar:
 		else:
 			#Vez do computador
 			move = getComputerMove(theBoard, playerLetter, computerLetter)
+			print(move)
 			makeMove(theBoard, computerLetter, move)
 
 			if isWinner(theBoard, computerLetter):
@@ -304,12 +304,12 @@ while jogar:
 
 	letterNew = ''
 	while not(letterNew == 'S' or letterNew == 'N'):
-		print"Voce quer jogar novamente? Digite S(para sim) ou N(para nao)"
-		letterNew = raw_input().upper()
+		print("Voce quer jogar novamente? Digite S(para sim) ou N(para nao)")
+		letterNew = input().upper()
 		if (letterNew != 'S' and letterNew != 'N'):
-			print"Entrada invalida! Digite S(para sim) ou N(para nao)!"
+			print("Entrada invalida! Digite S(para sim) ou N(para nao)!")
 		if(letterNew == 'N'):
-			print"Foi bom jogar com voce! Ate mais!"
+			print("Foi bom jogar com voce! Ate mais!")
 			jogar = False
 
 
