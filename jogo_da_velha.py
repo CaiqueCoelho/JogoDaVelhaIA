@@ -1,5 +1,10 @@
 import random
 
+#Students / Contributors
+#Caique de Paula Figueiredo Coelho
+#Lucas Queiroz
+#Phablo Tassio da Silva olivera
+
 def getBoardCopy(board):
 	#Faz uma copia do quadro e retrona esta copia
 
