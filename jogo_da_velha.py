@@ -136,11 +136,6 @@ def finishGame(board, computerLetter):
 	#Retorna 0 se o jogo termina empatado
 	#Retorna None se o jogo nao terminou
 
-	if computerLetter == 'X':
-		playerLetter = 'O'
-	else:
-		playerLetter = 'X'
-
 	if(isWinner(board, computerLetter)):
 		return 1
 
@@ -153,13 +148,17 @@ def finishGame(board, computerLetter):
 	else:
 		return None
 
+def setTurn(computerLetter, playerLetter, turn):
+	if turn == computerLetter:
+		nextTurn = playerLetter
+	else:
+		nextTurn = computerLetter
+	return nextTurn
 
 def alphabeta(board, computerLetter, turn, alpha, beta):
 	#Fazemos aqui a poda alphabeta
 
-	playerLetter = setLetra(computerLetter)
-
-	nextTurn = setVez(computerLetter, playerLetter, turn)
+	nextTurn = setTurn(computerLetter, playerLetter, turn)
 
 	finish = finishGame(board, computerLetter)
 
@@ -177,7 +176,7 @@ def alphabeta(board, computerLetter, turn, alpha, beta):
 				alpha = val
 
 			if alpha >= beta:
-				return alpha
+				break
 		return alpha
 
 	else:
@@ -189,66 +188,49 @@ def alphabeta(board, computerLetter, turn, alpha, beta):
 				beta = val
 
 			if alpha >= beta:
-				return beta
+				break
 		return beta
 
-
-def setVez(computerLetter, playerLetter, turn):
-	if turn == computerLetter:
-		nextTurn = playerLetter
-	else:
-		nextTurn = computerLetter
-	return nextTurn
-
-
-def setLetra(computerLetter):
-	if computerLetter == 'X':
-		playerLetter = 'O'
-	else:
-		playerLetter = 'X'
-	return playerLetter
-
-
-def getComputerMove(board, turn, computerLetter):
-	#Definimos aqui qual sera o movimento do computador
-
+def minimax(board, opcoes):
 	a = -2
-	opcoes = []
 
-	if computerLetter == 'X':
-		playerLetter = 'O'
-	else:
-		playerLetter = 'X'
-
-	#Comecamos aqui o MiniMax
-	#Primeiro chechamos se podemos ganhar no proximo movimento
-	for i in range(1, 10):
-		copy = getBoardCopy(board)
-		if isSpaceFree(copy, i):
-			makeMove(copy, computerLetter, i)
-			if isWinner(copy, computerLetter):
-				return i
-
-	#Checa se o jogador pode vencer no proximo movimento e bloqueia
-	for i in range(1, 10):
-		copy = getBoardCopy(board)
-		if isSpaceFree(copy, i):
-			makeMove(copy, playerLetter, i)
-			if isWinner(copy, playerLetter):
-				return i
-
-	possiveisOpcoesOn = possiveisOpcoes(board)
-
-	for move in possiveisOpcoesOn:
+	for move in possiveisOpcoes(board):
 		makeMove(board, computerLetter, move)
 		val = alphabeta(board, computerLetter, playerLetter, -2, 2)
-		print(val, 'dsadsadsadsa', move)
 		makeMove(board, '', move)
 		if val > a:
 			a = val
 			opcoes = [move]
 		elif val == a:
 			opcoes.append(move)
+	return opcoes
+
+def indexOfNextMove(board):
+
+	for i in range(1, 10):
+		copy = getBoardCopy(board)
+		copy2 = getBoardCopy(board)
+		if isSpaceFree(copy, i):
+			makeMove(copy, computerLetter, i)
+			makeMove(copy2, playerLetter, i)
+			if isWinner(copy, computerLetter) or isWinner(copy2, playerLetter):
+				return i
+			else:
+				break
+
+def getComputerMove(board):
+	#Definimos aqui qual sera o movimento do computador
+	opcoes = []
+
+	#Primeiro chechamos se podemos ganhar no proximo movimento ou se o jogador pode ganhar no proximo movimento
+	#Se sim, retornamos o indice da proxima jogada
+	index = indexOfNextMove(board)
+	if index :
+		return index
+
+	# caso nao ocorra nenhum dos 2 fatos, executamos o minimax para obter o index
+	opcoes = minimax(board, opcoes)
+
 	return random.choice(opcoes)
 
 print('Vamos jogar jogo da velha!')
@@ -285,8 +267,7 @@ while jogar:
 
 		else:
 			#Vez do computador
-			move = getComputerMove(theBoard, playerLetter, computerLetter)
-			print(move)
+			move = getComputerMove(theBoard)
 			makeMove(theBoard, computerLetter, move)
 
 			if isWinner(theBoard, computerLetter):
